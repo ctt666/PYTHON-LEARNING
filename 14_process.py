@@ -50,23 +50,20 @@ import concurrent.futures
 def cpu_bound(number):
     print(sum(i * i for i in range(number)))
 
-def calculate_sums(numbers):
+def calculate_sums(numbers_list):
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
-        pool.map(cpu_bound, numbers)
+        pool.map(cpu_bound, numbers_list)
 
 def calculate_multi_sums(numbers_list):
-    # with concurrent.futures.ProcessPoolExecutor() as pool:
-    #     pool.map(calculate_sums, numbers_list)
-    for numbers in numbers_list:
-        calculate_sums(numbers)
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        pool.map(cpu_bound, numbers_list)
 
 def main():
     start_time = time.perf_counter() 
     numbers_list = [] 
-    for i in range(3):
-        numbers = [10000000 * (i+1) + x for x in range(20)]
-        numbers_list.append(numbers)
-    calculate_multi_sums(numbers_list)
+    numbers_list = [10000000 + x for x in range(20)]
+    calculate_sums(numbers_list)
+    # calculate_multi_sums(numbers_list)
     end_time = time.perf_counter()
     print('Calculation takes {} seconds'.format(end_time - start_time))
     
